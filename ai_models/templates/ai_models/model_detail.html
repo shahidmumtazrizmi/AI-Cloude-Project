@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Model Details - CloudAI Platform{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-8 mt-8">
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ model.name }}</h1>
+    <p class="text-gray-600 mb-4">Type: {{ model.get_model_type_display }} | Status: {{ model.get_status_display }}</p>
+    <div class="mb-4">
+        <strong>Description:</strong>
+        <p>{{ model.description|default:'No description' }}</p>
+    </div>
+    <div class="mb-4">
+        <strong>Accuracy:</strong> {{ model.accuracy|default:'-' }}
+    </div>
+    <div class="mb-4">
+        <strong>Created:</strong> {{ model.created_at|date:'M d, Y' }}
+    </div>
+    <a href="{% url 'ai_models:models' %}" class="text-indigo-600 hover:underline">&larr; Back to Models</a>
+</div>
+{% endblock %} 

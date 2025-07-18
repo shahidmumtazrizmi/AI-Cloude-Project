@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Profile - CloudAI Platform{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-8 mt-8">
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">Profile</h1>
+    <div class="mb-4">
+        <strong>Email:</strong> {{ profile.user.email }}
+    </div>
+    <div class="mb-4">
+        <strong>Role:</strong> {{ profile.get_role_display }}
+    </div>
+    <div class="mb-4">
+        <strong>Company:</strong> {{ profile.company|default:'-' }}
+    </div>
+    <div class="mb-4">
+        <strong>Phone:</strong> {{ profile.phone|default:'-' }}
+    </div>
+    <div class="mb-4">
+        <strong>Credits:</strong> ${{ profile.credits|floatformat:2 }}
+    </div>
+    <div class="mb-4">
+        <strong>Joined:</strong> {{ profile.created_at|date:'M d, Y' }}
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}API Logs - CloudAI Platform{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-3xl font-bold text-gray-900">API Logs</h1>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endpoint</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Response Time (ms)</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for log in logs %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ log.endpoint }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ log.method }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ log.status_code }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ log.response_time_ms }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ log.timestamp|date:'M d, Y H:i' }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">No API logs yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

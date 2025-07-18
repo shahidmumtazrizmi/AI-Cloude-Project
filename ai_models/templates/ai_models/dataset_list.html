@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Datasets - CloudAI Platform{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Datasets</h1>
+            <p class="text-gray-600 mt-1">Manage your datasets for training and inference</p>
+        </div>
+        <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition flex items-center">
+            <i class="fas fa-upload mr-2"></i>Upload Dataset
+        </button>
+    </div>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Files</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size (GB)</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Labeled</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for dataset in datasets %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="{% url 'ai_models:dataset_detail' dataset.pk %}" class="text-indigo-600 hover:underline">{{ dataset.name }}</a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ dataset.file_count }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ dataset.total_size_gb }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{% if dataset.is_labeled %}Yes{% else %}No{% endif %}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ dataset.created_at|date:'M d, Y' }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">No datasets yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - CloudAI Platform{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ user.first_name|default:user.email }}</h1>
+                <p class="text-gray-600 mt-1">Manage your AI infrastructure from a single dashboard</p>
+            </div>
+            <div class="flex space-x-3">
+                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                    <i class="fas fa-plus mr-2"></i>New Instance
+                </button>
+                <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-cloud-upload-alt mr-2"></i>Upload Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow p-6 card-hover">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100">
+                    <i class="fas fa-microchip text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Active GPUs</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ active_gpus }}</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex items-center text-sm text-green-600">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    <span>+12% from last month</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 card-hover">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100">
+                    <i class="fas fa-database text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Storage Used</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ storage_used }} GB</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex items-center text-sm text-blue-600">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    <span>+5.2% from last week</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 card-hover">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-100">
+                    <i class="fas fa-chart-line text-yellow-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">API Calls</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ api_calls }}</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex items-center text-sm text-green-600">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    <span>+8.1% from yesterday</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6 card-hover">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-purple-100">
+                    <i class="fas fa-dollar-sign text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Monthly Spend</p>
+                    <p class="text-2xl font-bold text-gray-900">${{ monthly_spend }}</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex items-center text-sm text-red-600">
+                    <i class="fas fa-arrow-down mr-1"></i>
+                    <span>-2.4% from last month</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Recent Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Usage Chart -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">GPU Usage (Last 7 Days)</h3>
+            <canvas id="usageChart" height="200"></canvas>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+            <div class="space-y-4">
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div class="p-2 bg-green-100 rounded-full">
+                        <i class="fas fa-play text-green-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">GPU Instance Started</p>
+                        <p class="text-sm text-gray-600">ml-training-01 • 2 minutes ago</p>
+                    </div>
+                </div>
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div class="p-2 bg-blue-100 rounded-full">
+                        <i class="fas fa-upload text-blue-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">Dataset Uploaded</p>
+                        <p class="text-sm text-gray-600">image-dataset-v2.zip • 15 minutes ago</p>
+                    </div>
+                </div>
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div class="p-2 bg-purple-100 rounded-full">
+                        <i class="fas fa-cog text-purple-600"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">Model Training Complete</p>
+                        <p class="text-sm text-gray-600">image-classifier-v3 • 1 hour ago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Running Instances -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Running Instances</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Runtime</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost/Hour</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for instance in running_instances %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="p-2 bg-indigo-100 rounded-lg">
+                                    <i class="fas fa-server text-indigo-600"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <div class="text-sm font-medium text-gray-900">{{ instance.name }}</div>
+                                    <div class="text-sm text-gray-500">{{ instance.gpu_count }}x GPU</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ instance.gpu_type }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <span class="w-2 h-2 mr-1 bg-green-400 rounded-full animate-pulse"></span>
+                                Running
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2h 34m</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ instance.hourly_rate }}/hr</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3">Connect</button>
+                            <button class="text-red-600 hover:text-red-900">Stop</button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No running instances</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// Usage Chart
+const ctx = document.getElementById('usageChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+            label: 'GPU Hours',
+            data: [12, 19, 8, 15, 22, 18, 25],
+            borderColor: 'rgb(99, 102, 241)',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
